@@ -1,0 +1,275 @@
+ <!-- templates/admin/services_list.html.twig -->
+
+<div class="table-container">
+    <h1 class="table-title">Les Services</h1>
+
+    <!-- Search Bar for Services -->
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search for a service..." value="{{ searchQuery }}" />
+        <ul id="search-results"></ul>
+    </div>
+
+    <!-- Button to Ajouter Nouveau Service -->
+    <div class="add-service-button">
+        <a href="{{ path('app_service_new') }}" class="btn btn-add">Ajouter Nouveau Service</a>
+    </div>
+
+    <!-- Service Table -->
+    <table class="services-table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Durée</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="services-list">
+            {% for service in services %}
+                <tr>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.duration }}</td>
+                    <td class="actions">
+                        <!-- Edit Button -->
+                        <a href="{{ path('app_service_edit', {'id': service.id}) }}" class="btn btn-edit">Modifier</a>
+
+                        <!-- Delete Button -->
+                        <form action="{{ path('app_service_delete', {'id': service.id}) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-delete">Supprimer</button>
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ service.id) }}">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% for page in 1..totalPages %}
+            <a href="{{ path('app_service_index', { 'page': page, 'query': searchQuery }) }}" class="page-link {{ page == currentPage ? 'active' }}">
+                {{ page }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Inline CSS for Stylish Design -->
+<style>
+    /* Table Container */
+    .table-container {
+        width: 80%;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #f7f7f7;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Title */
+    .table-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Search Bar Styling */
+    .search-bar {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    #search-input {
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    #search-results {
+        list-style-type: none;
+        margin-top: 10px;
+        padding: 0;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        width: 80%;
+        max-width: 400px;
+        margin: 10px auto;
+        background-color: #fff;
+    }
+
+    #search-results li {
+        padding: 8px 16px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    #search-results li:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Add Service Button Styling */
+    .add-service-button {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-add {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        font-size: 16px;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-add:hover {
+        background-color: #218838;
+    }
+
+    /* Table Styles */
+    .services-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .services-table th, .services-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .services-table th {
+        background-color: #007bff;
+        color: white;
+        font-size: 16px;
+    }
+
+    .services-table td {
+        font-size: 14px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Button Styles */
+    .btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        border: none;
+    }
+
+    .btn-edit {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-delete {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .btn-delete:hover {
+        background-color: #c0392b;
+    }
+
+    /* Pagination Styling */
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .page-link {
+        display: inline-block;
+        padding: 8px 16px;
+        margin: 0 5px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+
+    .page-link.active {
+        background-color: #0056b3;
+    }
+
+    .page-link:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .table-container {
+            width: 95%;
+            padding: 15px;
+        }
+
+        .table-title {
+            font-size: 24px;
+        }
+
+        .services-table th, .services-table td {
+            font-size: 12px;
+        }
+
+        .btn {
+            font-size: 12px;
+        }
+
+        #search-input {
+            width: 90%;
+        }
+
+        #search-results {
+            width: 90%;
+        }
+    }
+</style>
+
+<script>
+    document.getElementById('search-input').addEventListener('input', function() {
+        let query = this.value;
+
+        // Perform search only if query is at least 3 characters long
+        if (query.length >= 3) {
+            fetch(`/service/search?query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultsContainer = document.getElementById('search-results');
+                    resultsContainer.innerHTML = '';
+
+                    // Display search results
+                    if (data.services && data.services.length > 0) {
+                        data.services.forEach(item => {
+                            let li = document.createElement('li');
+                            li.textContent = `${item.name} - ${item.description} (Durée: ${item.duration} minutes)`;
+                            resultsContainer.appendChild(li);
+                        });
+                    } else {
+                        resultsContainer.innerHTML = '<li>Aucun service trouvé</li>';
+                    }
+                });
+        } else {
+            // Clear results if query is too short
+            document.getElementById('search-results').innerHTML = '';
+        }
+    });
+</script>
