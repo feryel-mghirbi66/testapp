@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Controller;
-
+use DateTime;
+use DateInterval;
 use App\Entity\Service;
 use App\Entity\Consultation;
 use App\Form\ConsultationType;
@@ -14,6 +15,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Repository\ConsultationRepository;
 use App\Service\TwilioSmsService;  // Import the Twilio service
 use Psr\Log\LoggerInterface; 
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 
 final class ConsultationController extends AbstractController
 {
@@ -293,4 +299,104 @@ public function editStatus(Consultation $consultation, Request $request, TwilioS
             'consultations' => $consultations,
         ]);
     }
+
+
+
+    #[Route('/consultation/{id}/rate', name: 'app_consultation_rate', methods: ['POST'])]
+    public function rateConsultation(int $id, Request $request, SessionInterface $session): Response
+    {
+        $rating = $request->request->get('rating');
+    
+        if (!$rating || !in_array($rating, ['1', '2', '3', '4', '5'])) {
+            $this->addFlash('error', 'Invalid rating.');
+            return $this->redirectToRoute('app_consultation_view'); // Adjust route name accordingly
+        }
+    
+        // Store rating in session
+        $ratings = $session->get('ratings', []);
+        $ratings[$id] = (int) $rating; // Ensure it's stored as an integer
+        $session->set('ratings', $ratings);
+    
+        $this->addFlash('success', 'Rating submitted successfully!');
+        return $this->redirectToRoute('app_consultation_view'); // Adjust route name accordingly
+    }
+    #[Route('/consultations', name: 'app_consultation_view')]
+    public function viewConsultations(SessionInterface $session): Response
+    {
+        $consultations = $this->getDoctrine()->getRepository(Consultation::class)->findAll();
+        $ratings = $session->get('ratings', []);
+    
+        return $this->render('consultation/view.html.twig', [
+            'consultations' => $consultations,
+            'ratings' => $ratings
+        ]);
+    }
+
+
+
+    #[Route('/consultations/stats', name: 'consultation_stats')]
+    public function stats(ConsultationRepository $consultationRepository): Response
+    {
+        // Get the number of consultations per service
+        $consultationsByService = $consultationRepository->countConsultationsByService();
+
+        return $this->render('consultation/stats.html.twig', [
+            'consultationsByService' => $consultationsByService,
+        ]);
+    }
+    
+    
+    #[Route('/medical-services/en', name: 'medical_services_en')]
+    public function medicalServicesEn(): Response
+    {
+        return $this->render('clinique/medical_service.html.twig', [
+            'locale' => 'en',
+        ]);
+    }
+    
+    #[Route('/medical-services/fr', name: 'medical_services_fr')]
+    public function medicalServicesFr(): Response
+    {
+        return $this->render('clinique/medical_service.html.twig', [
+            'locale' => 'fr',
+        ]);
+    }
+    
+    #[Route('/medical-services', name: 'medical_services_redirect')]
+    public function redirectToDefaultLanguage(): Response
+    {
+        return $this->redirectToRoute('medical_services_en'); // Default to English
+    }
+
+
+
+
+
+
+
+    
+
+
+
+    
+    
+    
+
+
+
+
+
+
+    
+
+   
+
+
+    
+
+
+
+
+
+
 }

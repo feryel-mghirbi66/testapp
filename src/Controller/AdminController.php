@@ -22,12 +22,28 @@ class AdminController extends AbstractController
     }
 
     #[Route('/admin/services', name: 'admin_services', methods: ['GET'])]
-    public function services(ServiceRepository $serviceRepository): Response
-    {
-        return $this->render('admin/services_list.html.twig', [
-            'services' => $serviceRepository->findAll(),
-        ]);
-    }
+ 
+    #[Route('/admin/services', name: 'admin_services', methods: ['GET'])]
+public function services(ServiceRepository $serviceRepository, Request $request): Response
+{
+    $query = $request->query->get('query', '');
+    $page = $request->query->getInt('page', 1);
+    $perPage = 10;
+
+    // Fetch services based on pagination (assuming your repository has pagination logic)
+    $services = $serviceRepository->searchByNameOrDescription($query, $page, $perPage);
+    $totalServices = $serviceRepository->countBySearchQuery($query);
+    $totalPages = ceil($totalServices / $perPage);
+
+    return $this->render('admin/services_list.html.twig', [
+        'services' => $services,
+        'searchQuery' => $query,
+        'currentPage' => $page,
+        'totalPages' => $totalPages, // Pass total pages
+    ]);
+}
+
+
 
     #[Route('/admin/services/new', name: 'admin_service_new', methods: ['GET', 'POST'])]
     public function newService(Request $request, EntityManagerInterface $entityManager): Response

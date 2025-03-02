@@ -40,4 +40,13 @@ class ConsultationRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+public function countConsultationsByService(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('s.name as service, COUNT(c.id) as total')
+            ->join('c.service', 's')
+            ->groupBy('s.id')
+            ->getQuery()
+            ->getResult();
+    }
 }

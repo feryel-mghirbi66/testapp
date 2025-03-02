@@ -1,0 +1,17 @@
+ # /config/packages/translations/messages.fr.yaml
+medical_services:
+  title: "Services Médicaux"
+  heading: "Nos Services Médicaux Avancés"
+  team_logo: "Logo de l'Équipe"
+  radiology:
+    title: "Radiologie"
+    alt: "Service de Radiologie"
+    description: "Services d'imagerie de haute qualité, y compris les radiographies, les scanners et les IRM."
+  dna_testing:
+    title: "Test ADN"
+    alt: "Service de Test ADN"
+    description: "Dépistage génétique avancé et test d'ascendance pour des informations de santé et la prévention des maladies."
+  mri_scans:
+    title: "IRM"
+    alt: "Service d'IRM"
+    description: "Imagerie par résonance magnétique (IRM) pour détecter les conditions du cerveau, des muscles et des organes."

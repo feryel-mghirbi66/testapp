@@ -1,0 +1,103 @@
+ <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Consultations</title>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Header styles */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            width: 120px;
+            height: auto;
+        }
+
+        .header h1 {
+            color: #d32f2f;
+            margin-top: 10px;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1976d2;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with logo -->
+    <div class="header">
+  <img src="{{ asset('imagesS/logo.png') }}" alt="Logo" style="max-width: 150px;">
+
+
+
+        <h1>Liste des Consultations</h1>
+    </div>
+
+    <!-- Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Service</th>
+                <th>Statut</th>
+                 
+            </tr>
+        </thead>
+        <tbody>
+            {% for consultation in consultations %}
+                <tr>
+                    <td>{{ consultation.patientIdentifier }}</td>
+                    <td>{{ consultation.date|date('Y-m-d H:i') }}</td>
+                    <td>{{ consultation.service.name }}</td>
+                    <td>{{ consultation.status }}</td>
+ 
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Généré le {{ "now"|date('Y-m-d H:i') }}</p>
+    </div>
+
+</body>
+</html>

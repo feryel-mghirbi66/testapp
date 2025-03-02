@@ -1,0 +1,16 @@
+ medical_services:
+  title: "Medical Services"
+  heading: "Our Advanced Medical Services"
+  team_logo: "Team Logo"
+  radiology:
+    title: "Radiology"
+    alt: "Radiology Service"
+    description: "High-quality imaging services, including X-rays, CT scans, and MRIs, for accurate diagnostics."
+  dna_testing:
+    title: "DNA Testing"
+    alt: "DNA Testing Service"
+    description: "Advanced genetic screening and ancestry testing for health insights and disease prevention."
+  mri_scans:
+    title: "MRI Scans"
+    alt: "MRI Scans Service"
+    description: "Magnetic resonance imaging (MRI) for detecting brain, muscle, and organ conditions."

@@ -1,0 +1,146 @@
+ {% extends 'base.html.twig' %}
+
+{% block title %}Consultation Statistics{% endblock %}
+
+{% block body %}
+    <!-- Logo Section -->
+    <div class="logo-container" style="text-align: center; margin-top: 20px;">
+        <img src="{{ asset('imagesS/logo.png') }}" alt="Logo" style="max-width: 150px;">
+    </div>
+
+    <h2 class="page-title">Consultations Per Service</h2>
+
+    <!-- Chart Container -->
+    <div class="chart-container">
+        <canvas id="consultationChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Stats Table -->
+    <div class="stats-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Number of Consultations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in consultationsByService %}
+                    <tr>
+                        <td>{{ stat.service }}</td>
+                        <td>{{ stat.total }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Get the data from the Twig template
+        const consultationsData = {{ consultationsByService|json_encode()|raw }};
+        
+        // Prepare the chart data
+        const labels = consultationsData.map(stat => stat.service);  // Service names
+        const data = consultationsData.map(stat => stat.total);     // Number of consultations for each service
+
+        // Log data for debugging
+        console.log(consultationsData);
+
+        // Chart.js code to create the chart
+        const ctx = document.getElementById('consultationChart').getContext('2d');
+        const consultationChart = new Chart(ctx, {
+            type: 'bar', // Type of the chart (bar, line, etc.)
+            data: {
+                labels: labels,  // Service names
+                datasets: [{
+                    label: 'Consultations by Service',
+                    data: data,     // Number of consultations for each service
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Add CSS Styles -->
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Chart Container Styles */
+        .chart-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stats Table Styles */
+        .stats-table {
+            margin: 20px auto;
+            width: 80%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f1f1f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chart-container {
+                width: 100%;
+            }
+
+            .stats-table {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}

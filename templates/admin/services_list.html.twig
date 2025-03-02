@@ -6,7 +6,6 @@
     <!-- Search Bar for Services -->
     <div class="search-bar">
         <input type="text" id="search-input" placeholder="Search for a service..." value="{{ searchQuery }}" />
-        <ul id="search-results"></ul>
     </div>
 
     <!-- Button to Ajouter Nouveau Service -->
@@ -26,7 +25,7 @@
         </thead>
         <tbody id="services-list">
             {% for service in services %}
-                <tr>
+                <tr class="service-item">
                     <td>{{ service.name }}</td>
                     <td>{{ service.description }}</td>
                     <td>{{ service.duration }}</td>
@@ -48,7 +47,7 @@
     <!-- Pagination -->
     <div class="pagination">
         {% for page in 1..totalPages %}
-            <a href="{{ path('app_service_index', { 'page': page, 'query': searchQuery }) }}" class="page-link {{ page == currentPage ? 'active' }}">
+            <a href="{{ path('app_service_index', { 'page': page, 'query': searchQuery }) }}" class="page-link {{ page == currentPage ? 'active' }} ">
                 {{ page }}
             </a>
         {% endfor %}
@@ -89,28 +88,6 @@
         border: 1px solid #ddd;
         width: 80%;
         max-width: 400px;
-    }
-
-    #search-results {
-        list-style-type: none;
-        margin-top: 10px;
-        padding: 0;
-        max-height: 200px;
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        width: 80%;
-        max-width: 400px;
-        margin: 10px auto;
-        background-color: #fff;
-    }
-
-    #search-results li {
-        padding: 8px 16px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    #search-results li:hover {
-        background-color: #f1f1f1;
     }
 
     /* Add Service Button Styling */
@@ -214,62 +191,26 @@
     .page-link:hover {
         background-color: #0056b3;
     }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .table-container {
-            width: 95%;
-            padding: 15px;
-        }
-
-        .table-title {
-            font-size: 24px;
-        }
-
-        .services-table th, .services-table td {
-            font-size: 12px;
-        }
-
-        .btn {
-            font-size: 12px;
-        }
-
-        #search-input {
-            width: 90%;
-        }
-
-        #search-results {
-            width: 90%;
-        }
-    }
 </style>
 
 <script>
+    // Handle search input and filter the table rows
     document.getElementById('search-input').addEventListener('input', function() {
-        let query = this.value;
+        let query = this.value.toLowerCase();
+        
+        // Get all service rows
+        let rows = document.querySelectorAll('.service-item');
+        
+        rows.forEach(function(row) {
+            let name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            let description = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
 
-        // Perform search only if query is at least 3 characters long
-        if (query.length >= 3) {
-            fetch(`/service/search?query=${query}`)
-                .then(response => response.json())
-                .then(data => {
-                    let resultsContainer = document.getElementById('search-results');
-                    resultsContainer.innerHTML = '';
-
-                    // Display search results
-                    if (data.services && data.services.length > 0) {
-                        data.services.forEach(item => {
-                            let li = document.createElement('li');
-                            li.textContent = `${item.name} - ${item.description} (Durée: ${item.duration} minutes)`;
-                            resultsContainer.appendChild(li);
-                        });
-                    } else {
-                        resultsContainer.innerHTML = '<li>Aucun service trouvé</li>';
-                    }
-                });
-        } else {
-            // Clear results if query is too short
-            document.getElementById('search-results').innerHTML = '';
-        }
+            // Check if the row contains the search query
+            if (name.includes(query) || description.includes(query)) {
+                row.style.display = ''; // Show row
+            } else {
+                row.style.display = 'none'; // Hide row
+            }
+        });
     });
 </script>

@@ -1,4 +1,4 @@
- {# templates/consultation/view.html.twig #}
+  {# templates/consultation/view.html.twig #}
 
 {% extends 'base.html.twig' %}
 
@@ -6,35 +6,37 @@
 
 {% block body %}
     <style>
-        /* General styling */
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #8B0000, #4682B4); /* Dark red and steel blue gradient */
-            color: #333;
+            background: linear-gradient(to right, #8B0000, #4682B4);
+            color: #fff;
             margin: 0;
             padding: 0;
-            background-size: cover;
-        }
-
-        h1 {
-            color: #2d4b61; /* Dark blue */
             text-align: center;
         }
 
-        /* Form and list styling */
-        ul {
-            max-width: 600px;
+        .container {
+            max-width: 700px;
             margin: 30px auto;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        h1 {
+            color: #2d4b61;
+        }
+
+        ul {
+            padding: 0;
             list-style-type: none;
         }
 
         li {
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
         }
 
         li:last-child {
@@ -42,50 +44,124 @@
         }
 
         strong {
-            color: #2d4b61; /* Dark blue for text emphasis */
+            color: #2d4b61;
         }
 
         a {
-            color: #0099cc; /* Cool blue for links */
+            color: #0099cc;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-weight: bold;
+            margin: 5px;
         }
 
         a:hover {
-            color: #0077b3; /* Darker blue on hover */
+            color: #0077b3;
         }
 
-        /* No consultations found */
-        p {
-            text-align: center;
-            color: #ff4d4d; /* Red color for alert */
+        .no-data {
+            color: #d9534f;
             font-weight: bold;
         }
 
-        /* Responsiveness */
-        @media (max-width: 768px) {
-            ul {
-                width: 90%;
-                padding: 15px;
-            }
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #4682B4;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #2d4b61;
+        }
+
+        /* Rating styles */
+        .rating {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .rating span {
+            font-size: 22px;
+            cursor: pointer;
+            color: #ddd; /* Default gray stars */
+        }
+
+        .rating span.selected {
+            color: #FFD700; /* Gold stars when selected */
         }
     </style>
 
-    <h1>Consultations for {{ patientIdentifier }}</h1>
+    <div class="container">
+        <h1>Consultations for {{ patientIdentifier }}</h1>
 
-    {% if consultations is empty %}
-        <p>No consultations trouver pour ce  patient.</p>
-    {% else %}
-        <ul>
-            {% for consultation in consultations %}
-                <li>
-                    <strong>Service:</strong> {{ consultation.service.name }}<br>
-                    <strong>Date:</strong> {{ consultation.date|date('Y-m-d H:i') }}<br>
-                    <strong>Status:</strong> {{ consultation.status }}<br>  {# Display status here #}
-                    <a href="{{ path('app_consultation_edit', { id: consultation.id }) }}">Modifier</a> |
-                    <a href="{{ path('app_delete_consultation', { id: consultation.id }) }}" onclick="return confirm('Are you sure you want to delete this consultation?')">Supprimer</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% if consultations is empty %}
+            <p class="no-data">Aucune consultation trouvée pour ce patient.</p>
+        {% else %}
+            <ul>
+                {% for consultation in consultations %}
+                    <li>
+                        <strong>Service:</strong> {{ consultation.service.name }}<br>
+                        <strong>Date:</strong> {{ consultation.date|date('Y-m-d H:i') }}<br>
+                        <strong>Status:</strong> {{ consultation.status }}<br>
+
+                        {# Interactive star rating system #}
+                        <strong>Note:</strong>
+                        <div class="rating" data-id="{{ consultation.id }}">
+                            <span data-value="1">★</span>
+                            <span data-value="2">★</span>
+                            <span data-value="3">★</span>
+                            <span data-value="4">★</span>
+                            <span data-value="5">★</span>
+                        </div>
+
+                        <a href="{{ path('app_consultation_edit', { id: consultation.id }) }}">Modifier</a> |
+                        <a href="{{ path('app_delete_consultation', { id: consultation.id }) }}" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette consultation ?')">Supprimer</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+ 
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load saved ratings
+            document.querySelectorAll(".rating").forEach(ratingDiv => {
+                let consultationId = ratingDiv.dataset.id;
+                let savedRating = localStorage.getItem("rating_" + consultationId);
+                
+                if (savedRating) {
+                    highlightStars(ratingDiv, savedRating);
+                }
+            });
+
+            // Handle star hover and click events
+            document.querySelectorAll(".rating span").forEach(star => {
+                star.addEventListener("click", function () {
+                    let value = this.dataset.value;
+                    let parent = this.parentNode;
+                    let consultationId = parent.dataset.id;
+                    
+                    // Save rating in localStorage
+                    localStorage.setItem("rating_" + consultationId, value);
+
+                    // Update UI
+                    highlightStars(parent, value);
+
+                    alert("You rated this consultation " + value + " stars!");
+                });
+            });
+
+            function highlightStars(parent, value) {
+                parent.querySelectorAll("span").forEach(s => {
+                    s.classList.toggle("selected", s.dataset.value <= value);
+                });
+            }
+        });
+    </script>
 {% endblock %}

@@ -26,11 +26,35 @@
             color: #333;
         }
 
+        /* Logo Section */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            max-width: 200px; /* Adjust size */
+            height: auto;
+        }
+
         /* Heading */
         h1 {
             color: #d32f2f; /* Red */
             font-size: 26px;
             margin-bottom: 20px;
+        }
+
+        /* Stats Section */
+        .stats {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .stats span {
+            font-size: 20px;
+            color: #FFD700;
         }
 
         /* Table Styles */
@@ -86,11 +110,47 @@
             color: white;
         }
 
+        /* PDF Download Button */
+        .pdf-download {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .pdf-download:hover {
+            background: #388E3C;
+        }
+
         /* No Consultations Message */
         p {
             font-size: 18px;
             font-weight: bold;
             color: #333;
+        }
+
+        /* Rating Stars */
+        .rating {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .rating span {
+            font-size: 22px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .rating span.selected {
+            color: #FFD700; /* Gold for selected stars */
         }
 
         /* Responsive Design */
@@ -110,7 +170,24 @@
     </style>
 
     <div class="container">
+        <!-- Team Logo Section -->
+        <div class="logo-container">
+            <img src="{{ asset('imagesS/logo.png') }}" alt="Team Logo">
+        </div>
+
         <h1>Consultations List</h1>
+
+        <!-- Stats Section -->
+        <div class="stats">
+            <p>Total Consultations: <span>{{ consultations|length }}</span></p>
+        </div>
+
+        <a href="{{ path('app_consultations_pdf') }}" class="pdf-download">Télécharger PDF</a>
+
+        <!-- Link to Stats Page -->
+        <a href="{{ path('consultation_stats') }}" class="pdf-download">Afficher les Statistiques</a>
+
+        <canvas id="consultationStatsChart" width="400" height="200" style="display: none;"></canvas>
 
         {% if consultations is not empty %}
             <table>
@@ -120,6 +197,7 @@
                         <th>Date</th>
                         <th>Service</th>
                         <th>Status</th>
+                        <th>Client Rating</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -131,6 +209,15 @@
                             <td>{{ consultation.service.name }}</td>
                             <td>{{ consultation.status }}</td>
                             <td>
+                                <div class="rating" data-id="{{ consultation.id }}">
+                                    <span data-value="1">★</span>
+                                    <span data-value="2">★</span>
+                                    <span data-value="3">★</span>
+                                    <span data-value="4">★</span>
+                                    <span data-value="5">★</span>
+                                </div>
+                            </td>
+                            <td>
                                 {% if consultation.status != 'Completed' %}
                                     <a href="{{ path('app_edit_consultation_status', { id: consultation.id }) }}">Modifier Status</a>
                                 {% endif %}
@@ -140,7 +227,51 @@
                 </tbody>
             </table>
         {% else %}
-            <p>Pas de consultations trouver.</p>
+            <p>Pas de consultations trouvées.</p>
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Load ratings from localStorage
+            document.querySelectorAll(".rating").forEach(ratingDiv => {
+                let consultationId = ratingDiv.dataset.id;
+                let savedRating = localStorage.getItem("rating_" + consultationId);
+                
+                if (savedRating) {
+                    highlightStars(ratingDiv, savedRating);
+                }
+            });
+
+            function highlightStars(parent, value) {
+                parent.querySelectorAll("span").forEach(s => {
+                    s.classList.toggle("selected", s.dataset.value <= value);
+                });
+            }
+
+            // Show chart when button is clicked
+            document.getElementById("show-chart").addEventListener("click", function(e) {
+                e.preventDefault();
+
+                // Show the chart canvas
+                document.getElementById("consultationStatsChart").style.display = 'block';
+
+                // Chart.js Data (replace with actual data from your controller)
+                var ctx = document.getElementById('consultationStatsChart').getContext('2d');
+                var chart = new Chart(ctx, {
+                    type: 'bar', // Bar chart
+                    data: {
+                        labels: ['Service A', 'Service B', 'Service C'], // Replace with your actual data
+                        datasets: [{
+                            label: 'Consultation Stats',
+                            data: [12, 19, 3], // Replace with actual values from your stats
+                            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}
