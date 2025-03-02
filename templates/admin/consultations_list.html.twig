@@ -183,12 +183,12 @@
         </div>
 
         <a href="{{ path('app_consultations_pdf') }}" class="pdf-download">Télécharger PDF</a>
-
+          <a href="{{ path('consultation_sorted') }}" class="pdf-download">Trier les Consultations</a>
         <!-- Link to Stats Page -->
         <a href="{{ path('consultation_stats') }}" class="pdf-download">Afficher les Statistiques</a>
-
+      
         <canvas id="consultationStatsChart" width="400" height="200" style="display: none;"></canvas>
-
+        
         {% if consultations is not empty %}
             <table>
                 <thead>

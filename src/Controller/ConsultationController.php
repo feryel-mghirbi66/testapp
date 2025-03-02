@@ -370,6 +370,34 @@ public function editStatus(Consultation $consultation, Request $request, TwilioS
 
 
 
+    #[Route('/consultations/sorted/{direction}', name: 'consultation_sorted')]
+    public function sorted(ConsultationRepository $consultationRepository, $direction = 'ASC'): Response
+    {
+        // Determine sort order (ascending or descending)
+        $sortDirection = ($direction === 'ASC') ? 'ASC' : 'DESC';
+    
+        // Query and sort consultations by date based on the direction
+        $consultations = $consultationRepository->createQueryBuilder('c')
+            ->orderBy('c.date', $sortDirection)  // Sort by 'date'
+            ->getQuery()
+            ->getResult();
+    
+        return $this->render('admin/consultations_list.html.twig', [
+            'consultations' => $consultations,
+            'sortDirection' => $sortDirection,  // Pass current sort direction to Twig
+        ]);
+    }
+    
+    
+    
+
+
+
+
+
+
+
+
 
 
 

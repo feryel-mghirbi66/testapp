@@ -49,4 +49,16 @@ public function countConsultationsByService(): array
             ->getQuery()
             ->getResult();
     }
+
+
+    public function findConsultationsByDate()
+    {
+        return $this->createQueryBuilder('c')
+            ->orderBy('c.date', 'ASC') // ASC pour tri croissant, DESC pour tri décroissant
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 }
