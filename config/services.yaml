@@ -1,0 +1,27 @@
+ # This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    twilio_account_sid: 'ACb02d26f8540f7753657ffebdd472cf69'  # Your correct SID
+    twilio_auth_token: 'd9b3eb6affea298f7c1ffd986ef17a98'  # Your correct Auth Token
+    twilio_phone_number: '+18782907284'  # Your Twilio phone number
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\TwilioSmsService:
+        arguments:
+            $accountSid: '%twilio_account_sid%'  # Correct SID
+            $authToken: '%twilio_auth_token%'    # Correct Auth Token
+            $fromPhoneNumber: '%twilio_phone_number%'  # Correct Twilio phone number
