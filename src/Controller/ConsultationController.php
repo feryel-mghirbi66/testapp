@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
 final class ConsultationController extends AbstractController
@@ -387,44 +389,14 @@ public function editStatus(Consultation $consultation, Request $request, TwilioS
             'sortDirection' => $sortDirection,  // Pass current sort direction to Twig
         ]);
     }
+
+
+    #[Route('/calendar', name: 'calendar')]
+    public function index(): Response
+    {
+        return $this->render('admin/index1.html.twig');
+    }
     
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    
-    
-    
-
-
-
-
-
-
-    
-
-   
-
-
-    
-
-
-
-
 
 
 }
