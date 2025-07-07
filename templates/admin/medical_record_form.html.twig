@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ mode == 'new' ? 'Nouveau Dossier Médical' : 'Modifier Dossier Médical' }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css1/admin.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {{ mode == 'new' ? 'Nouveau Dossier Médical' : 'Modifier Dossier Médical' }}
+            </h6>
+        </div>
+        <div class="card-body">
+            <form method="post" action="{{ mode == 'new' ? path('admin_medical_record_new') : path('admin_medical_record_edit', {'id': patient.id}) }}">
+                {% if mode == 'edit' %}
+                    <input type="hidden" name="_method" value="PUT">
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" class="form-control" value="{{ patient.nom|default('') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" class="form-control" value="{{ patient.prenom|default('') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ patient.email|default('') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dateNaissance">Date de Naissance</label>
+                    <input type="date" id="dateNaissance" name="dateNaissance" class="form-control" value="{{ patient.dateNaissance|default('') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="adresse">Adresse</label>
+                    <textarea id="adresse" name="adresse" class="form-control" rows="3">{{ patient.adresse|default('') }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" class="form-control" value="{{ patient.telephone|default('') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes Médicales</label>
+                    <textarea id="notes" name="notes" class="form-control" rows="5">{{ patient.notes|default('') }}</textarea>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        {{ mode == 'new' ? 'Créer' : 'Mettre à jour' }}
+                    </button>
+                    <a href="{{ path('admin_medical_records') }}" class="btn btn-secondary">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

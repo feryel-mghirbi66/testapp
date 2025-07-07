@@ -1,4 +1,4 @@
-  {# templates/admin/dashboard.html.twig #}
+  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +18,7 @@
                 <li><a href="{{ path('admin_services') }}">Services</a></li>
                 <li><a href="{{ path('app_admin_consultations') }}">Consultations</a></li>
                 <li><a href="{{ path('admin_equipment') }}">Equipment</a></li>
-                <li><a href="{{ path('admin_infrastructure') }}">Infrastructure</a></li>
+                <li><a href="{{ path('departement_index') }}">Infrastructure</a></li>
                 <li><a href="{{ path('admin_medical_records') }}">Medical Records</a></li>
                 <li><a href="{{ path('admin_medication_stock') }}">Medication Stock</a></li>
             </ul>
@@ -48,7 +48,7 @@
                 <div class="task-card" style="background-color: #00A9E0; color: white;">
                     <h3>Infrastructure</h3>
                     <p>Manage hospital infrastructure</p>
-                    <a href="{{ path('admin_infrastructure') }}">Go to Infrastructure</a>
+                    <a href="{{ path('departement_index') }}">Go to Infrastructure</a>
                 </div>
                 <div class="task-card" style="background-color: #003B5C; color: white;">
                     <h3>Medical Records</h3>
@@ -58,7 +58,7 @@
                 <div class="task-card" style="background-color: #003B5C; color: white;">
                     <h3>Medication Stock</h3>
                     <p>Manage medication stock</p>
-                    <a href="{{ path('admin_medication_stock') }}">Go to Medication Stock</a>
+                    <a href="{{ path('admin_medication_stock') }}">Go to Medication
                 </div>
             </div>
         </div>

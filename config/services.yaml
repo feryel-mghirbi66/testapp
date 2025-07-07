@@ -4,9 +4,15 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    twilio_account_sid: '%env(TWILIO_ACCOUNT_SID)%'  # Secure via .env
-    twilio_auth_token: '%env(TWILIO_AUTH_TOKEN)%'    # Secure via .env
-    twilio_phone_number: '%env(TWILIO_PHONE_NUMBER)%'  # Secure via .env
+    my_pdf.default_font: 'Arial'
+    twilio_account_sid: 'ACb02d26f8540f7753657ffebdd472cf69'  # Your correct SID
+    twilio_auth_token: 'd9b3eb6affea298f7c1ffd986ef17a98'  # Your correct Auth Token
+    twilio_phone_number: '+18782907284'  # Your Twilio phone 
+    upload_directory: '%kernel.project_dir%/public/uploads'
+    dossiers_directory: '%kernel.project_dir%/public/uploads/dossiers'
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    pdf_directory: '%kernel.project_dir%/public/uploads/pdf'
 
 services:
     _defaults:
@@ -24,4 +30,13 @@ services:
         arguments:
             $accountSid: '%twilio_account_sid%'  
             $authToken: '%twilio_auth_token%'    
-            $fromPhoneNumber: '%twilio_phone_number%'
+            $fromPhoneNumber: '%twilio_phone_number%'  
+
+    MyPdfBundle\Services\PdfGenerator:
+        arguments:
+            $defaultFont: '%my_pdf.default_font%'
+            $twig: '@twig'
+
+    App\Service\HuggingFaceService:
+        arguments:
+            $apiKey: '%env(HUGGINGFACE_API_KEY)%'
